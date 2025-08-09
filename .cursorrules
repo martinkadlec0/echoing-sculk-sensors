@@ -1,0 +1,51 @@
+# Cursor Rules for Echoing Sculk Sensors Minecraft Mod
+
+## Project Overview
+This is a Minecraft Fabric mod that adds Echoing Sculk Sensors to the game. The mod follows Fabric's architecture and conventions.
+
+## Versions
+- Use Java/Minecraft/Fabric/Fabric API version based on `gradle.properties` file
+
+## Mod behaviour
+- This mods adds a need item called "Echoing Sculk Sensor"
+- It is crafted using a Sculk Sensor and 3 echo shards
+- After it is placed it will listen for any sound vibrations (same rane as clibrated sculk sensors)
+- It will remember the first sound it hears and will emit a redstone signal when it hears it again
+- Once it has a stored sound it will only react ot that one specific sound
+- Right clicking the sensor will clear the stored sound
+- Powering the sensor will clear the stored sound as well (only one side, same is calibrated sculk sensors)
+- For now it should use same texture as calibrated sculk sensors
+- It can be water logged
+- Same as sculk sensors, there is a 1 second cooldown period after being placed or after reseting the sound
+- Same as Sculk sensors, Echoing Sculk sensors emit a redstone signal when they are activated when hearing the stored sound again.
+    - The strength of the redstone signal is inversely proportional to the distance the vibration signal traveled
+    - The closer the vibration is to the sculk sensor, the stronger the redstone signal is
+- When measured with comporator, the redstone signal strength depends on the type of stored sound
+    - Unlike sculk sensors, this can be measure at any point when a sound is stored, not only when the sound is heard
+
+## Changing code
+- Prefer using editor filesystem instead of command lines
+- When making changes to code makes sure to delete imports that are no longer used
+- Avoid changes to depedency versions defined in `gradle.properties` file
+- When you need to run more complex scripts and powershell is not enough, prefer using Node.js over Python
+
+## Fabric documentation
+- Items: https://docs.fabricmc.net/develop/items/first-item
+- Blocks: https://docs.fabricmc.net/develop/blocks/first-block
+- Block entities: https://docs.fabricmc.net/develop/blocks/block-entities
+- States: https://docs.fabricmc.net/develop/blocks/blockstates
+- Entities: https://docs.fabricmc.net/develop/blocks/block-entities
+- Data generation: https://docs.fabricmc.net/develop/data-generation/setup
+- Codecs: https://docs.fabricmc.net/develop/codecs
+- Events: https://docs.fabricmc.net/develop/events
+
+## Third-party code
+- Minecraft 1.21.8 source code is located in third-party/minecraft
+- These files are of particular note for this mod:
+    - third-party/minecraft/net/minecraft/block/SculkSensorBlock.java
+    - third-party/minecraft/net/minecraft/block/entity/SculkSensorBlockEntity.java
+    - third-party/minecraft/net/minecraft/block/enums/SculkSensorPhase.java
+    - third-party/minecraft/net/minecraft/block/CalibratedSculkSensorBlock.java
+    - third-party/minecraft/net/minecraft/block/entity/CalibratedSculkSensorBlockEntity.java
+- In third-party/netherite-shulkers is another mod I am developing. You can use it as inspiration.
+- In third-party/fabric-1.21.8 is current version of fabric api implementation
