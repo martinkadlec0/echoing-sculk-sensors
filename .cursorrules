@@ -8,12 +8,12 @@ This is a Minecraft Fabric mod that adds Echoing Sculk Sensors to the game. The 
 
 ## Mod behaviour
 - This mods adds a need item called "Echoing Sculk Sensor"
-- It is crafted using a Sculk Sensor and 3 echo shards
-- After it is placed it will listen for any sound vibrations (same rane as clibrated sculk sensors)
-- It will remember the first sound it hears and will emit a redstone signal when it hears it again
-- Once it has a stored sound it will only react ot that one specific sound
+- It is crafted using a Sculk Sensor and an echo shards using shapeless recipe
+- After it is placed it will listen for any sound vibrations (same range as calibrated sculk sensors)
+- It will remember the first sound (game event, not frequency) it hears and will emit a redstone signal when it hears it again
+- Once it has a stored sound (game event) it will only react ot that one specific sound (game event)
 - Right clicking the sensor will clear the stored sound
-- Powering the sensor will clear the stored sound as well (only one side, same is calibrated sculk sensors)
+- Powering the sensor will clear the stored sound as well (only one side, same is calibrated sculk sensors). This happens only when the block gets powered, not while it remains powered.
 - For now it should use same texture as calibrated sculk sensors
 - It can be water logged
 - Same as sculk sensors, there is a 1 second cooldown period after being placed or after reseting the sound

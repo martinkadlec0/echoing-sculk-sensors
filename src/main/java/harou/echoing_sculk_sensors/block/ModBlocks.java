@@ -25,8 +25,7 @@ public class ModBlocks {
     }
 
     private static AbstractBlock.Settings createEchoingSculkSensorSettings() {
-        return AbstractBlock.Settings.copyShallow(Blocks.SCULK_SENSOR)
-            .emissiveLighting((state, world, pos) -> SculkSensorPhase.ACTIVE == state.get(EchoingSculkSensorBlock.SCULK_SENSOR_PHASE));
+        return AbstractBlock.Settings.copyShallow(Blocks.SCULK_SENSOR);
     }
 
     private static Block register(String id, java.util.function.Function<AbstractBlock.Settings, Block> factory, AbstractBlock.Settings settings) {

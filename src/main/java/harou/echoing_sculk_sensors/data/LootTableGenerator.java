@@ -14,7 +14,7 @@ public class LootTableGenerator extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
-        // Generate loot table for echoing sculk sensor - drops itself when broken
-        addDrop(ModBlocks.ECHOING_SCULK_SENSOR);
+        // Generate loot table for echoing sculk sensor - only drops itself with silk touch
+        addDrop(ModBlocks.ECHOING_SCULK_SENSOR, dropsWithSilkTouch(ModBlocks.ECHOING_SCULK_SENSOR));
     }
 }
