@@ -1,0 +1,20 @@
+package harou.echoing_sculk_sensors.data;
+
+import harou.echoing_sculk_sensors.block.ModBlocks;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
+import net.minecraft.registry.RegistryWrapper;
+
+import java.util.concurrent.CompletableFuture;
+
+public class LootTableGenerator extends FabricBlockLootTableProvider {
+    public LootTableGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+        super(output, registriesFuture);
+    }
+
+    @Override
+    public void generate() {
+        // Generate loot table for echoing sculk sensor - drops itself when broken
+        addDrop(ModBlocks.ECHOING_SCULK_SENSOR);
+    }
+}

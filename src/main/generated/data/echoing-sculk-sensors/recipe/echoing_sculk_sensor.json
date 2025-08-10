@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "minecraft:sculk_sensor",
+    "minecraft:echo_shard"
+  ],
+  "result": {
+    "count": 1,
+    "id": "echoing-sculk-sensors:echoing_sculk_sensor"
+  }
+}
