@@ -22,9 +22,9 @@
       "echo_shard": "echoing-sculk-sensors:block/echoing_sculk_sensor_echo_shard",
       "bottom": "block/sculk_sensor_bottom",
       "side": "block/sculk_sensor_side",
-      "calibrated_side": "block/calibrated_sculk_sensor_input_side",
+      "calibrated_side": "echoing-sculk-sensors:block/echoing_sculk_sensor_input_side",
       "tendrils": "block/sculk_sensor_tendril_inactive",
-      "top": "block/calibrated_sculk_sensor_top",
+      "top": "echoing-sculk-sensors:block/echoing_sculk_sensor_top",
       "particle": "block/sculk_sensor_bottom"
   },
   "elements": [
