@@ -18,20 +18,15 @@ import net.minecraft.world.event.BlockPositionSource;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.Vibrations;
+
 import org.jetbrains.annotations.Nullable;
 
 public class EchoingSculkSensorBlockEntity extends SculkSensorBlockEntity {
-    private Vibrations.ListenerData listenerData;
-    private final Vibrations.VibrationListener listener;
-    private final Vibrations.Callback callback = this.createCallback();
     @Nullable
     private RegistryKey<GameEvent> storedGameEvent = null;
 
-
     public EchoingSculkSensorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ECHOING_SCULK_SENSOR, pos, state);
-        this.listenerData = new Vibrations.ListenerData();
-        this.listener = new Vibrations.VibrationListener(this);
     }
 
     @Override
@@ -42,7 +37,6 @@ public class EchoingSculkSensorBlockEntity extends SculkSensorBlockEntity {
     @Override
     protected void readData(ReadView view) {
         super.readData(view);
-        this.listenerData = view.read("listener", Vibrations.ListenerData.CODEC).orElseGet(Vibrations.ListenerData::new);
         
         // Read stored game event ID
         String gameEventId = view.getString("stored_game_event", "");
@@ -56,7 +50,6 @@ public class EchoingSculkSensorBlockEntity extends SculkSensorBlockEntity {
     @Override
     protected void writeData(WriteView view) {
         super.writeData(view);
-        view.put("listener", Vibrations.ListenerData.CODEC, this.listenerData);
         
         // Write stored game event ID
         if (this.storedGameEvent != null) {
@@ -65,18 +58,6 @@ public class EchoingSculkSensorBlockEntity extends SculkSensorBlockEntity {
             view.putString("stored_game_event", "");
         }
     }
-
-    @Override
-    public Vibrations.ListenerData getVibrationListenerData() {
-        return this.listenerData;
-    }
-
-    @Override
-    public Vibrations.Callback getVibrationCallback() {
-        return this.callback;
-    }
-
-
 
     @Nullable
     public RegistryKey<GameEvent> getStoredGameEvent() {
@@ -97,11 +78,6 @@ public class EchoingSculkSensorBlockEntity extends SculkSensorBlockEntity {
         this.markDirty();
     }
 
-    @Override
-    public Vibrations.VibrationListener getEventListener() {
-        return this.listener;
-    }
-
     public void tick(ServerWorld world, BlockPos pos, BlockState state) {
         Vibrations.Ticker.tick(world, this.getVibrationListenerData(), this.getVibrationCallback());
     }
@@ -118,17 +94,12 @@ public class EchoingSculkSensorBlockEntity extends SculkSensorBlockEntity {
 
         @Override
         public int getRange() {
-            return 16;
+            return RANGE;
         }
 
         @Override
         public PositionSource getPositionSource() {
             return this.positionSource;
-        }
-
-        @Override
-        public boolean triggersAvoidCriterion() {
-            return true;
         }
 
         @Override
@@ -155,35 +126,33 @@ public class EchoingSculkSensorBlockEntity extends SculkSensorBlockEntity {
         @Override
         public void accept(ServerWorld world, BlockPos pos, RegistryEntry<GameEvent> event, @Nullable Entity sourceEntity, @Nullable Entity entity, float distance) {
             BlockState blockState = EchoingSculkSensorBlockEntity.this.getCachedState();
-            if (EchoingSculkSensorBlock.isInactive(blockState)) {
-                int frequency = Vibrations.getFrequency(event);
-                RegistryKey<GameEvent> eventKey = event.getKey().orElse(null);
-                GameSoundEvent gameSoundEvent = EchoingSculkSensorBlock.getStoredSound(blockState);
-                
-                // If we don't have a stored event yet, store this one
-                if (gameSoundEvent == GameSoundEvent.NONE && eventKey != null) {
-                    // Convert the GameEvent to our enum
-                    GameSoundEvent newGameSoundEvent = GameSoundEvent.fromRegistryKey(eventKey);
-                    if (newGameSoundEvent != GameSoundEvent.NONE) {
-                        // Store the exact GameEvent in the block entity for persistence
-                        EchoingSculkSensorBlockEntity.this.setStoredGameEvent(eventKey);
-                        
-                        // Store the enum value in the block state
-                        BlockState newState = EchoingSculkSensorBlock.setStoredSound(blockState, newGameSoundEvent);
-                        world.setBlockState(this.pos, newState, Block.NOTIFY_ALL);
-                        blockState = newState; // Update our reference
-                        gameSoundEvent = newGameSoundEvent;
-                    }
+            if (!EchoingSculkSensorBlock.isInactive(blockState)) return;
+
+            int frequency = Vibrations.getFrequency(event);
+            RegistryKey<GameEvent> eventKey = event.getKey().orElse(null);
+            GameSoundEvent gameSoundEvent = EchoingSculkSensorBlock.getStoredSound(blockState);
+            
+            // If we don't have a stored event yet, store this one
+            if (gameSoundEvent == GameSoundEvent.NONE && eventKey != null) {
+                // Convert the GameEvent to our enum
+                GameSoundEvent newGameSoundEvent = GameSoundEvent.fromRegistryKey(eventKey);
+                if (newGameSoundEvent != GameSoundEvent.NONE) {
+                    // Store the exact GameEvent in the block entity for persistence
+                    EchoingSculkSensorBlockEntity.this.setStoredGameEvent(eventKey);
+                    
+                    // Store the enum value in the block state
+                    BlockState newState = EchoingSculkSensorBlock.setStoredSound(blockState, newGameSoundEvent);
+                    world.setBlockState(this.pos, newState, Block.NOTIFY_ALL);
+                    blockState = newState; // Update our reference
+                    gameSoundEvent = newGameSoundEvent;
                 }
-                
-                // Only activate if this is the exact stored event
-                if (eventKey != null && GameSoundEvent.fromRegistryKey(eventKey) == gameSoundEvent && gameSoundEvent != GameSoundEvent.NONE) {
-                    int signalStrength = Vibrations.getSignalStrength(distance, this.getRange());
-                    Block block = blockState.getBlock();
-                    if (block instanceof EchoingSculkSensorBlock) {
-                        EchoingSculkSensorBlock echoingSculkSensorBlock = (EchoingSculkSensorBlock)block;
-                        echoingSculkSensorBlock.setActive(sourceEntity, world, this.pos, blockState, signalStrength, frequency);
-                    }
+            }
+            
+            // Only activate if this is the exact stored event
+            if (eventKey != null && GameSoundEvent.fromRegistryKey(eventKey) == gameSoundEvent && gameSoundEvent != GameSoundEvent.NONE) {
+                int signalStrength = Vibrations.getSignalStrength(distance, this.getRange());
+                if (blockState.getBlock() instanceof EchoingSculkSensorBlock block) {
+                    block.setActive(sourceEntity, world, this.pos, blockState, signalStrength, frequency);
                 }
             }
         }
@@ -191,11 +160,6 @@ public class EchoingSculkSensorBlockEntity extends SculkSensorBlockEntity {
         @Override
         public void onListen() {
             EchoingSculkSensorBlockEntity.this.markDirty();
-        }
-
-        @Override
-        public boolean requiresTickingChunksAround() {
-            return true;
         }
     }
 }

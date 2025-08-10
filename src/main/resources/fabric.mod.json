@@ -3,20 +3,24 @@
 	"id": "echoing-sculk-sensors",
 	"version": "${version}",
 	"name": "Echoing Sculk Sensors",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Sculk sensor variant that remembers the first sound and reacts only to that it.",
 	"authors": [
-		"Me!"
+		"BSHarou"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/mod/echoing-sculk-sensors",
+		"sources": "https://github.com/martinkadlec0/echoing-sculk-sensors",
+		"issues": "https://github.com/martinkadlec0/echoing-sculk-sensors/issues"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/echoing-sculk-sensors/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			"harou.echoing_sculk_sensors.EchoingSculkSensors"
+		],
+		"client": [
+			"harou.echoing_sculk_sensors.EchoingSculkSensorsClient"
 		],
 		"fabric-datagen": [
 			"harou.echoing_sculk_sensors.EchoingSculkSensorsDataGenerator"
@@ -29,6 +33,6 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"modmenu": "*"
 	}
 }

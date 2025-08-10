@@ -78,18 +78,12 @@ public class EchoingSculkSensorBlock extends BlockWithEntity implements Waterlog
 
     @Override
     protected void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, net.minecraft.util.math.random.Random random) {
-        if (getPhase(state) != SculkSensorPhase.ACTIVE) {
-            if (getPhase(state) == SculkSensorPhase.COOLDOWN) {
-                world.setBlockState(pos, state.with(SCULK_SENSOR_PHASE, SculkSensorPhase.INACTIVE), Block.NOTIFY_ALL);
-                if (!state.get(WATERLOGGED).booleanValue()) {
-                    world.playSound(null, pos, SoundEvents.BLOCK_SCULK_SENSOR_CLICKING_STOP, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.2f + 0.8f);
-                }
-            }
-        } else {
-            world.setBlockState(pos, state.with(SCULK_SENSOR_PHASE, SculkSensorPhase.COOLDOWN), Block.NOTIFY_ALL);
-            world.scheduleBlockTick(pos, state.getBlock(), 10);
-            updateNeighbors(world, pos, state);
-            if (!state.get(WATERLOGGED).booleanValue()) {
+        SculkSensorPhase phase = getPhase(state);
+        if (phase == SculkSensorPhase.ACTIVE) {
+            setCooldown(world, pos, state);
+        } else if (phase == SculkSensorPhase.COOLDOWN) {
+            world.setBlockState(pos, state.with(SCULK_SENSOR_PHASE, SculkSensorPhase.INACTIVE), Block.NOTIFY_ALL);
+            if (!state.get(WATERLOGGED)) {
                 world.playSound(null, pos, SoundEvents.BLOCK_SCULK_SENSOR_CLICKING_STOP, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.2f + 0.8f);
             }
         }
@@ -186,7 +180,7 @@ public class EchoingSculkSensorBlock extends BlockWithEntity implements Waterlog
         world.setBlockState(pos, state.with(SCULK_SENSOR_PHASE, SculkSensorPhase.ACTIVE).with(POWER, power), Block.NOTIFY_ALL);
         world.scheduleBlockTick(pos, state.getBlock(), 10);
         updateNeighbors(world, pos, state);
-        if (!state.get(WATERLOGGED).booleanValue()) {
+        if (!state.get(WATERLOGGED)) {
             world.playSound(null, pos, SoundEvents.BLOCK_SCULK_SENSOR_CLICKING, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.2f + 0.8f);
         }
     }
