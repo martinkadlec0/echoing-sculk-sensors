@@ -15,6 +15,8 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
@@ -130,6 +132,9 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
             if (isPowered && !wasPowered && hasStoredSound(state)) {
                 // Clear both block state and block entity
                 clearStoredSoundComplete(world, pos, state);
+
+                // State gets modified during clear/cooldown
+                state = world.getBlockState(pos);
             }
             
             // Update the powered state if it changed
@@ -145,10 +150,25 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
         if (world.getBlockEntity(pos) instanceof EchoingSculkSensorBlockEntity blockEntity) {
             blockEntity.clearStoredGameEvent();
         }
+
+        if (hasStoredSound(state)) {
+            if (!(Boolean)state.get(WATERLOGGED)) {
+                world.playSound(
+                    null,
+                    pos.getX() + 0.5,
+                    pos.getY() + 0.5,
+                    pos.getZ() + 0.5,
+                    SoundEvents.BLOCK_SCULK_SENSOR_CLICKING,
+                    SoundCategory.BLOCKS,
+                    1.0F,
+                    world.random.nextFloat() * 0.2F + 0.8F
+                );
+            }
         
-        // Clear the frequency from block state and reset to cooldown using parent method
-        BlockState newState = clearStoredSound(state);
-        SculkSensorBlock.setCooldown(world, pos, newState);
+            // Clear the frequency from block state and reset to cooldown using parent method
+            BlockState newState = clearStoredSound(state);
+            SculkSensorBlock.setCooldown(world, pos, newState);
+        }
     }
 
     @Override
