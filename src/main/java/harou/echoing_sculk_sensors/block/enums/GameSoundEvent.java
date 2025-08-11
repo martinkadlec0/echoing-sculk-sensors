@@ -50,7 +50,22 @@ public enum GameSoundEvent implements StringIdentifiable {
     LIGHTNING_STRIKE("lightning_strike", 14, GameEvent.LIGHTNING_STRIKE.registryKey()),
     TELEPORT("teleport", 14, GameEvent.TELEPORT.registryKey()),
     ENTITY_DIE("entity_die", 15, GameEvent.ENTITY_DIE.registryKey()),
-    EXPLODE("explode", 15, GameEvent.EXPLODE.registryKey());
+    EXPLODE("explode", 15, GameEvent.EXPLODE.registryKey()),
+    RESONATE_1("resonate_1", 1, GameEvent.RESONATE_1.registryKey()),
+    RESONATE_2("resonate_2", 2, GameEvent.RESONATE_2.registryKey()),
+    RESONATE_3("resonate_3", 3, GameEvent.RESONATE_3.registryKey()),
+    RESONATE_4("resonate_4", 4, GameEvent.RESONATE_4.registryKey()),
+    RESONATE_5("resonate_5", 5, GameEvent.RESONATE_5.registryKey()),
+    RESONATE_6("resonate_6", 6, GameEvent.RESONATE_6.registryKey()),
+    RESONATE_7("resonate_7", 7, GameEvent.RESONATE_7.registryKey()),
+    RESONATE_8("resonate_8", 8, GameEvent.RESONATE_8.registryKey()),
+    RESONATE_9("resonate_9", 9, GameEvent.RESONATE_9.registryKey()),
+    RESONATE_10("resonate_10", 10, GameEvent.RESONATE_10.registryKey()),
+    RESONATE_11("resonate_11", 11, GameEvent.RESONATE_11.registryKey()),
+    RESONATE_12("resonate_12", 12, GameEvent.RESONATE_12.registryKey()),
+    RESONATE_13("resonate_13", 13, GameEvent.RESONATE_13.registryKey()),
+    RESONATE_14("resonate_14", 14, GameEvent.RESONATE_14.registryKey()),
+    RESONATE_15("resonate_15", 15, GameEvent.RESONATE_15.registryKey());
 
     private final String name;
     private final int frequency;
