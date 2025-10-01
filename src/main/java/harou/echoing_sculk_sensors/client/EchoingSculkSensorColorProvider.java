@@ -5,7 +5,6 @@ import harou.echoing_sculk_sensors.block.ModBlocks;
 import harou.echoing_sculk_sensors.block.enums.GameSoundEvent;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.enums.SculkSensorPhase;
 import net.minecraft.client.color.block.BlockColorProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;

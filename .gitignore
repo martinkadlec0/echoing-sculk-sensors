@@ -41,4 +41,4 @@ replay_*.log
 *.jfr
 
 # third party
-third-party/
+third-party

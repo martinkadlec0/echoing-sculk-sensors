@@ -71,7 +71,7 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             return EchoingSculkSensorBlock.validateTicker(type, ModBlockEntities.ECHOING_SCULK_SENSOR, 
                 (worldx, pos, statex, blockEntity) -> Vibrations.Ticker.tick(worldx, blockEntity.getVibrationListenerData(), blockEntity.getVibrationCallback()));
         }
@@ -88,7 +88,7 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
     }
 
     @Override
-    protected int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+    protected int getComparatorOutput(BlockState state, World world, BlockPos pos, Direction direction) {
         GameSoundEvent gameSoundEvent = state.get(STORED_SOUND);
         return gameSoundEvent.getFrequency();
     }
@@ -121,7 +121,7 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
 
     @Override
     protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, @Nullable WireOrientation wireOrientation, boolean notify) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             // Check if powered from the opposite side of the facing direction (like calibrated sculk sensors)
             Direction facing = state.get(FACING);
             Direction powerSide = facing.getOpposite();
@@ -173,7 +173,7 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
 
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             // Clear the stored sound and reset to cooldown phase
             clearStoredSoundComplete(world, pos, state);
             return ActionResult.SUCCESS;
