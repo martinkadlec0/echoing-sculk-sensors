@@ -5,102 +5,100 @@ import com.mojang.serialization.MapCodec;
 import harou.echoing_sculk_sensors.block.entity.EchoingSculkSensorBlockEntity;
 import harou.echoing_sculk_sensors.block.entity.ModBlockEntities;
 import harou.echoing_sculk_sensors.block.enums.GameSoundEvent;
-
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SculkSensorBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.block.WireOrientation;
-import net.minecraft.world.event.Vibrations;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SculkSensorBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class EchoingSculkSensorBlock extends SculkSensorBlock {
-    public static final MapCodec<EchoingSculkSensorBlock> CODEC = EchoingSculkSensorBlock.createCodec(EchoingSculkSensorBlock::new);
-    public static final net.minecraft.state.property.EnumProperty<Direction> FACING = Properties.HORIZONTAL_FACING;
-    public static final net.minecraft.state.property.EnumProperty<GameSoundEvent> STORED_SOUND = net.minecraft.state.property.EnumProperty.of("stored_sound", GameSoundEvent.class);
-    public static final net.minecraft.state.property.BooleanProperty POWERED = net.minecraft.state.property.BooleanProperty.of("powered");
+    public static final MapCodec<EchoingSculkSensorBlock> CODEC = EchoingSculkSensorBlock.simpleCodec(EchoingSculkSensorBlock::new);
+    public static final net.minecraft.world.level.block.state.properties.EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final net.minecraft.world.level.block.state.properties.EnumProperty<GameSoundEvent> STORED_SOUND = net.minecraft.world.level.block.state.properties.EnumProperty.create("stored_sound", GameSoundEvent.class);
+    public static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = net.minecraft.world.level.block.state.properties.BooleanProperty.create("powered");
 
-    public EchoingSculkSensorBlock(AbstractBlock.Settings settings) {
+    public EchoingSculkSensorBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.setDefaultState(this.getDefaultState()
-                .with(FACING, Direction.NORTH)
-                .with(STORED_SOUND, GameSoundEvent.NONE)
-                .with(POWERED, false));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(STORED_SOUND, GameSoundEvent.NONE)
+                .setValue(POWERED, false));
     }
 
     @Override
-    public MapCodec<EchoingSculkSensorBlock> getCodec() {
+    public MapCodec<EchoingSculkSensorBlock> codec() {
         return CODEC;
     }
 
     @Override
     @Nullable
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockState baseState = super.getPlacementState(ctx);
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockState baseState = super.getStateForPlacement(ctx);
         if (baseState == null) return null;
         return baseState
-                .with(FACING, ctx.getHorizontalPlayerFacing())
-                .with(STORED_SOUND, GameSoundEvent.NONE)
-                .with(POWERED, false);
+                .setValue(FACING, ctx.getHorizontalDirection())
+                .setValue(STORED_SOUND, GameSoundEvent.NONE)
+                .setValue(POWERED, false);
     }
 
     @Override
     @Nullable
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new EchoingSculkSensorBlockEntity(pos, state);
     }
 
     @Override
     @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        if (!world.isClient()) {
-            return EchoingSculkSensorBlock.validateTicker(type, ModBlockEntities.ECHOING_SCULK_SENSOR, 
-                (worldx, pos, statex, blockEntity) -> Vibrations.Ticker.tick(worldx, blockEntity.getVibrationListenerData(), blockEntity.getVibrationCallback()));
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        if (!world.isClientSide()) {
+            return EchoingSculkSensorBlock.createTickerHelper(type, ModBlockEntities.ECHOING_SCULK_SENSOR, 
+                (worldx, pos, statex, blockEntity) -> VibrationSystem.Ticker.tick(worldx, blockEntity.getVibrationData(), blockEntity.getVibrationUser()));
         }
         return null;
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+    public int getSignal(BlockState state, BlockGetter world, BlockPos pos, Direction direction) {
         // Like calibrated sculk sensor - don't emit power from facing direction
-        if (direction != state.get(FACING)) {
-            return super.getWeakRedstonePower(state, world, pos, direction);
+        if (direction != state.getValue(FACING)) {
+            return super.getSignal(state, world, pos, direction);
         }
         return 0;
     }
 
     @Override
-    protected int getComparatorOutput(BlockState state, World world, BlockPos pos, Direction direction) {
-        GameSoundEvent gameSoundEvent = state.get(STORED_SOUND);
+    protected int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction) {
+        GameSoundEvent gameSoundEvent = state.getValue(STORED_SOUND);
         return gameSoundEvent.getFrequency();
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder); // Adds SCULK_SENSOR_PHASE, POWER, WATERLOGGED
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder); // Adds SCULK_SENSOR_PHASE, POWER, WATERLOGGED
         builder.add(FACING, STORED_SOUND, POWERED); // Add our custom properties
     }
 
     public static GameSoundEvent getStoredSound(BlockState state) {
-        return state.get(STORED_SOUND);
+        return state.getValue(STORED_SOUND);
     }
 
     public static boolean hasStoredSound(BlockState state) {
@@ -108,25 +106,25 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
     }
 
     public static BlockState setStoredSound(BlockState state, GameSoundEvent gameSoundEvent) {
-        return state.with(STORED_SOUND, gameSoundEvent);
+        return state.setValue(STORED_SOUND, gameSoundEvent);
     }
 
     public static BlockState clearStoredSound(BlockState state) {
-        return state.with(STORED_SOUND, GameSoundEvent.NONE);
+        return state.setValue(STORED_SOUND, GameSoundEvent.NONE);
     }
 
     public static boolean isPowered(BlockState state) {
-        return state.get(POWERED);
+        return state.getValue(POWERED);
     }
 
     @Override
-    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, @Nullable WireOrientation wireOrientation, boolean notify) {
-        if (!world.isClient()) {
+    protected void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock, @Nullable Orientation wireOrientation, boolean notify) {
+        if (!world.isClientSide()) {
             // Check if powered from the opposite side of the facing direction (like calibrated sculk sensors)
-            Direction facing = state.get(FACING);
+            Direction facing = state.getValue(FACING);
             Direction powerSide = facing.getOpposite();
-            boolean isPowered = world.getEmittedRedstonePower(pos.offset(powerSide), powerSide) > 0;
-            boolean wasPowered = state.get(POWERED);
+            boolean isPowered = world.getSignal(pos.relative(powerSide), powerSide) > 0;
+            boolean wasPowered = state.getValue(POWERED);
             
             // Only clear stored sound when transitioning from unpowered to powered
             if (isPowered && !wasPowered && hasStoredSound(state)) {
@@ -139,27 +137,27 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
             
             // Update the powered state if it changed
             if (isPowered != wasPowered) {
-                world.setBlockState(pos, state.with(POWERED, isPowered), Block.NOTIFY_ALL);
+                world.setBlock(pos, state.setValue(POWERED, isPowered), Block.UPDATE_ALL);
             }
         }
-        super.neighborUpdate(state, world, pos, sourceBlock, wireOrientation, notify);
+        super.neighborChanged(state, world, pos, sourceBlock, wireOrientation, notify);
     }
 
-    private void clearStoredSoundComplete(World world, BlockPos pos, BlockState state) {
+    private void clearStoredSoundComplete(Level world, BlockPos pos, BlockState state) {
         // Clear the stored GameEvent from block entity
         if (world.getBlockEntity(pos) instanceof EchoingSculkSensorBlockEntity blockEntity) {
             blockEntity.clearStoredGameEvent();
         }
 
         if (hasStoredSound(state)) {
-            if (!(Boolean)state.get(WATERLOGGED)) {
+            if (!(Boolean)state.getValue(WATERLOGGED)) {
                 world.playSound(
                     null,
                     pos.getX() + 0.5,
                     pos.getY() + 0.5,
                     pos.getZ() + 0.5,
-                    SoundEvents.BLOCK_SCULK_SENSOR_CLICKING,
-                    SoundCategory.BLOCKS,
+                    SoundEvents.SCULK_CLICKING,
+                    SoundSource.BLOCKS,
                     1.0F,
                     world.random.nextFloat() * 0.2F + 0.8F
                 );
@@ -167,31 +165,31 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
         
             // Clear the frequency from block state and reset to cooldown using parent method
             BlockState newState = clearStoredSound(state);
-            SculkSensorBlock.setCooldown(world, pos, newState);
+            SculkSensorBlock.deactivate(world, pos, newState);
         }
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!world.isClient()) {
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!world.isClientSide()) {
             // Clear the stored sound and reset to cooldown phase
             clearStoredSoundComplete(world, pos, state);
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ActionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
-    public int getCooldownTime() {
+    public int getActiveTicks() {
         return 10;
     }
 

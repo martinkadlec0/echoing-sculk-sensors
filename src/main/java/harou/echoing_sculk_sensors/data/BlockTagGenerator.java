@@ -4,22 +4,21 @@ import harou.echoing_sculk_sensors.EchoingSculkSensors;
 import harou.echoing_sculk_sensors.block.ModBlocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.tags.BlockTags;
 import java.util.concurrent.CompletableFuture;
 
 public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
-    public BlockTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public BlockTagGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup registries) {
+    protected void addTags(HolderLookup.Provider registries) {
         EchoingSculkSensors.LOGGER.info("Generating block tags for Echoing Sculk Sensors...");
         
         // Add echoing sculk sensor to the hoe mineable tag
-        valueLookupBuilder(BlockTags.HOE_MINEABLE)
+        valueLookupBuilder(BlockTags.MINEABLE_WITH_HOE)
             .add(ModBlocks.ECHOING_SCULK_SENSOR);
         
         EchoingSculkSensors.LOGGER.info("Block tags generated successfully!");

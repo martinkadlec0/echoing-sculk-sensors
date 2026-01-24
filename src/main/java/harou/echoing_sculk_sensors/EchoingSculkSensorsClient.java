@@ -6,7 +6,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.minecraft.client.render.BlockRenderLayer;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 
 @Environment(EnvType.CLIENT)
 public class EchoingSculkSensorsClient implements ClientModInitializer {
@@ -15,7 +15,7 @@ public class EchoingSculkSensorsClient implements ClientModInitializer {
     public void onInitializeClient() {
         // Set the render layer for the Echoing Sculk Sensor to CUTOUT
         // This ensures it renders with transparency like the Calibrated Sculk Sensor
-        BlockRenderLayerMap.putBlock(ModBlocks.ECHOING_SCULK_SENSOR, BlockRenderLayer.CUTOUT);
+        BlockRenderLayerMap.putBlock(ModBlocks.ECHOING_SCULK_SENSOR, ChunkSectionLayer.CUTOUT);
         
         // Register color provider for dynamic echo shard tinting
         EchoingSculkSensorColorProvider.register();

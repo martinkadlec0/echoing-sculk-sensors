@@ -4,11 +4,10 @@ import harou.echoing_sculk_sensors.block.EchoingSculkSensorBlock;
 import harou.echoing_sculk_sensors.block.ModBlocks;
 import harou.echoing_sculk_sensors.block.enums.GameSoundEvent;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.color.block.BlockColorProvider;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockRenderView;
-
+import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class EchoingSculkSensorColorProvider {
@@ -17,9 +16,9 @@ public class EchoingSculkSensorColorProvider {
         ColorProviderRegistry.BLOCK.register(new EchoingSculkSensorBlockColorProvider(), ModBlocks.ECHOING_SCULK_SENSOR);
     }
     
-    private static class EchoingSculkSensorBlockColorProvider implements BlockColorProvider {
+    private static class EchoingSculkSensorBlockColorProvider implements BlockColor {
         @Override
-        public int getColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos pos, int tintIndex) {
+        public int getColor(BlockState state, @Nullable BlockAndTintGetter world, @Nullable BlockPos pos, int tintIndex) {
             // tintIndex = 1 means it's the echo shard texture
             if (tintIndex == 1 && state.getBlock() instanceof EchoingSculkSensorBlock) {
                 GameSoundEvent storedSound = EchoingSculkSensorBlock.getStoredSound(state);                

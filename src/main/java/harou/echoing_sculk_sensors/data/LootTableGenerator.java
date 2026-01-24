@@ -3,18 +3,17 @@ package harou.echoing_sculk_sensors.data;
 import harou.echoing_sculk_sensors.block.ModBlocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-import net.minecraft.registry.RegistryWrapper;
-
+import net.minecraft.core.HolderLookup;
 import java.util.concurrent.CompletableFuture;
 
 public class LootTableGenerator extends FabricBlockLootTableProvider {
-    public LootTableGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public LootTableGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
     public void generate() {
         // Generate loot table for echoing sculk sensor - only drops itself with silk touch
-        addDrop(ModBlocks.ECHOING_SCULK_SENSOR, dropsWithSilkTouch(ModBlocks.ECHOING_SCULK_SENSOR));
+        add(ModBlocks.ECHOING_SCULK_SENSOR, createSilkTouchOnlyTable(ModBlocks.ECHOING_SCULK_SENSOR));
     }
 }

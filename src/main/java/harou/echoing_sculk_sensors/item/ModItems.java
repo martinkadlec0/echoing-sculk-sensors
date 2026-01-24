@@ -1,13 +1,13 @@
 package harou.echoing_sculk_sensors.item;
 
 import harou.echoing_sculk_sensors.block.ModBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 public class ModItems {
 
@@ -21,23 +21,23 @@ public class ModItems {
         }
     }
 
-    private static RegistryKey<Item> keyOf(RegistryKey<Block> blockKey) {
-        return RegistryKey.of(RegistryKeys.ITEM, blockKey.getValue());
+    private static ResourceKey<Item> keyOf(ResourceKey<Block> blockKey) {
+        return ResourceKey.create(Registries.ITEM, blockKey.identifier());
     }
 
     private static Item registerBlockItem(Block block) {
         return register(
-            keyOf(block.getRegistryEntry().registryKey()), 
+            keyOf(block.builtInRegistryHolder().key()), 
             itemSettings -> new BlockItem(block, itemSettings), 
-            new Item.Settings().useBlockPrefixedTranslationKey()
+            new Item.Properties().useBlockDescriptionPrefix()
         );
     }
 
-    private static Item register(RegistryKey<Item> key, java.util.function.Function<Item.Settings, Item> factory, Item.Settings settings) {
-        Item item = factory.apply(settings.registryKey(key));
+    private static Item register(ResourceKey<Item> key, java.util.function.Function<Item.Properties, Item> factory, Item.Properties settings) {
+        Item item = factory.apply(settings.setId(key));
         if (item instanceof BlockItem blockItem) {
-            blockItem.appendBlocks(Item.BLOCK_ITEMS, item);
+            blockItem.registerBlocks(Item.BY_BLOCK, item);
         }
-        return Registry.register(Registries.ITEM, key, item);
+        return Registry.register(BuiltInRegistries.ITEM, key, item);
     }
 }
