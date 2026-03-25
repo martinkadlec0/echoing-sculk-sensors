@@ -4,7 +4,7 @@ import harou.echoing_sculk_sensors.block.ModBlocks;
 import harou.echoing_sculk_sensors.block.entity.ModBlockEntities;
 import harou.echoing_sculk_sensors.item.ModItems;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
@@ -31,8 +31,8 @@ public class EchoingSculkSensors implements ModInitializer {
         ModItems.initialize();
         
         // Add Echoing Sculk Sensor to the Redstone Blocks creative tab after Calibrated Sculk Sensor
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
-            entries.addAfter(Blocks.CALIBRATED_SCULK_SENSOR.asItem(), ModItems.ECHOING_SCULK_SENSOR);
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
+            entries.insertAfter(Blocks.CALIBRATED_SCULK_SENSOR.asItem(), ModItems.ECHOING_SCULK_SENSOR);
         });
         
         LOGGER.info("Echoing Sculk Sensors mod initialized!");

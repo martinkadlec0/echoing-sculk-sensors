@@ -143,15 +143,15 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
         super.neighborChanged(state, world, pos, sourceBlock, wireOrientation, notify);
     }
 
-    private void clearStoredSoundComplete(Level world, BlockPos pos, BlockState state) {
+    private void clearStoredSoundComplete(Level level, BlockPos pos, BlockState state) {
         // Clear the stored GameEvent from block entity
-        if (world.getBlockEntity(pos) instanceof EchoingSculkSensorBlockEntity blockEntity) {
+        if (level.getBlockEntity(pos) instanceof EchoingSculkSensorBlockEntity blockEntity) {
             blockEntity.clearStoredGameEvent();
         }
 
         if (hasStoredSound(state)) {
             if (!(Boolean)state.getValue(WATERLOGGED)) {
-                world.playSound(
+                level.playSound(
                     null,
                     pos.getX() + 0.5,
                     pos.getY() + 0.5,
@@ -159,15 +159,20 @@ public class EchoingSculkSensorBlock extends SculkSensorBlock {
                     SoundEvents.SCULK_CLICKING,
                     SoundSource.BLOCKS,
                     1.0F,
-                    world.random.nextFloat() * 0.2F + 0.8F
+                    level.getRandom().nextFloat() * 0.2F + 0.8F
                 );
             }
         
             // Clear the frequency from block state and reset to cooldown using parent method
             BlockState newState = clearStoredSound(state);
-            SculkSensorBlock.deactivate(world, pos, newState);
+            SculkSensorBlock.deactivate(level, pos, newState);
         }
     }
+
+    @Override
+	protected boolean useShapeForLightOcclusion(final BlockState state) {
+		return false;
+	}
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
