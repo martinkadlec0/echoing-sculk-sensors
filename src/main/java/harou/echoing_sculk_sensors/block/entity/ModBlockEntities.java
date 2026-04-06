@@ -9,13 +9,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class ModBlockEntities {
-    public static BlockEntityType<EchoingSculkSensorBlockEntity> ECHOING_SCULK_SENSOR;
+	public static BlockEntityType<EchoingSculkSensorBlockEntity> ECHOING_SCULK_SENSOR;
 
-    public static void initialize() {
-        ECHOING_SCULK_SENSOR = Registry.register(
-            BuiltInRegistries.BLOCK_ENTITY_TYPE,
-            Identifier.fromNamespaceAndPath(EchoingSculkSensors.MOD_ID, "echoing_sculk_sensor"),
-            FabricBlockEntityTypeBuilder.<EchoingSculkSensorBlockEntity>create(EchoingSculkSensorBlockEntity::new, ModBlocks.ECHOING_SCULK_SENSOR).build()
-        );
-    }
+	public static void initialize() {
+		ECHOING_SCULK_SENSOR = Registry.register(
+			BuiltInRegistries.BLOCK_ENTITY_TYPE,
+			Identifier.fromNamespaceAndPath(EchoingSculkSensors.MOD_ID, "echoing_sculk_sensor"),
+			FabricBlockEntityTypeBuilder.<EchoingSculkSensorBlockEntity>create(EchoingSculkSensorBlockEntity::new, ModBlocks.ECHOING_SCULK_SENSOR).build()
+		);
+	}
 }

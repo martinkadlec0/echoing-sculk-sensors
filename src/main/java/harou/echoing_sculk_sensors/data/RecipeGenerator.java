@@ -11,32 +11,32 @@ import net.minecraft.world.item.Items;
 import java.util.concurrent.CompletableFuture;
 
 public class RecipeGenerator extends FabricRecipeProvider {
-    public RecipeGenerator(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
-        super(output, registriesFuture);
-    }
+	public RecipeGenerator(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+		super(output, registriesFuture);
+	}
 
-    @Override
-    protected net.minecraft.data.recipes.RecipeProvider createRecipeProvider(HolderLookup.Provider registryLookup, RecipeOutput exporter) {
-        return new net.minecraft.data.recipes.RecipeProvider(registryLookup, exporter) {
-            @Override
-            public void buildRecipes() {
-                EchoingSculkSensors.LOGGER.info("Generating Echoing Sculk Sensor recipes...");
-                
-                // Generate shapeless recipe: 1 sculk sensor + 1 echo shard = 1 echoing sculk sensor
-                shapeless(RecipeCategory.REDSTONE, ModItems.ECHOING_SCULK_SENSOR)
-                    .requires(Items.SCULK_SENSOR)
-                    .requires(Items.ECHO_SHARD)
-                    .unlockedBy("has_sculk_sensor", has(Items.SCULK_SENSOR))
-                    .unlockedBy("has_echo_shard", has(Items.ECHO_SHARD))
-                    .save(output);
-                
-                EchoingSculkSensors.LOGGER.info("Echoing Sculk Sensor recipes generated successfully!");
-            }
-        };
-    }
-    
-    @Override
-    public String getName() {
-        return "Echoing Sculk Sensor Recipes";
-    }
+	@Override
+	protected net.minecraft.data.recipes.RecipeProvider createRecipeProvider(HolderLookup.Provider registryLookup, RecipeOutput exporter) {
+		return new net.minecraft.data.recipes.RecipeProvider(registryLookup, exporter) {
+			@Override
+			public void buildRecipes() {
+				EchoingSculkSensors.LOGGER.info("Generating Echoing Sculk Sensor recipes...");
+				
+				// Generate shapeless recipe: 1 sculk sensor + 1 echo shard = 1 echoing sculk sensor
+				shapeless(RecipeCategory.REDSTONE, ModItems.ECHOING_SCULK_SENSOR)
+					.requires(Items.SCULK_SENSOR)
+					.requires(Items.ECHO_SHARD)
+					.unlockedBy("has_sculk_sensor", has(Items.SCULK_SENSOR))
+					.unlockedBy("has_echo_shard", has(Items.ECHO_SHARD))
+					.save(output);
+				
+				EchoingSculkSensors.LOGGER.info("Echoing Sculk Sensor recipes generated successfully!");
+			}
+		};
+	}
+	
+	@Override
+	public String getName() {
+		return "Echoing Sculk Sensor Recipes";
+	}
 }

@@ -7,13 +7,13 @@ import net.minecraft.core.HolderLookup;
 import java.util.concurrent.CompletableFuture;
 
 public class LootTableGenerator extends FabricBlockLootSubProvider {
-    public LootTableGenerator(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
-        super(output, registriesFuture);
-    }
+	public LootTableGenerator(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+		super(output, registriesFuture);
+	}
 
-    @Override
-    public void generate() {
-        // Generate loot table for echoing sculk sensor - only drops itself with silk touch
-        add(ModBlocks.ECHOING_SCULK_SENSOR, createSilkTouchOnlyTable(ModBlocks.ECHOING_SCULK_SENSOR));
-    }
+	@Override
+	public void generate() {
+		// Generate loot table for echoing sculk sensor - only drops itself with silk touch
+		add(ModBlocks.ECHOING_SCULK_SENSOR, createSilkTouchOnlyTable(ModBlocks.ECHOING_SCULK_SENSOR));
+	}
 }

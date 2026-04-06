@@ -9,18 +9,18 @@ import net.minecraft.tags.BlockTags;
 import java.util.concurrent.CompletableFuture;
 
 public class BlockTagGenerator extends FabricTagsProvider.BlockTagsProvider {
-    public BlockTagGenerator(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
-        super(output, registriesFuture);
-    }
+	public BlockTagGenerator(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+		super(output, registriesFuture);
+	}
 
-    @Override
-    protected void addTags(HolderLookup.Provider registries) {
-        EchoingSculkSensors.LOGGER.info("Generating block tags for Echoing Sculk Sensors...");
-        
-        // Add echoing sculk sensor to the hoe mineable tag
-        valueLookupBuilder(BlockTags.MINEABLE_WITH_HOE)
-            .add(ModBlocks.ECHOING_SCULK_SENSOR);
-        
-        EchoingSculkSensors.LOGGER.info("Block tags generated successfully!");
-    }
+	@Override
+	protected void addTags(HolderLookup.Provider registries) {
+		EchoingSculkSensors.LOGGER.info("Generating block tags for Echoing Sculk Sensors...");
+		
+		// Add echoing sculk sensor to the hoe mineable tag
+		valueLookupBuilder(BlockTags.MINEABLE_WITH_HOE)
+			.add(ModBlocks.ECHOING_SCULK_SENSOR);
+		
+		EchoingSculkSensors.LOGGER.info("Block tags generated successfully!");
+	}
 }
